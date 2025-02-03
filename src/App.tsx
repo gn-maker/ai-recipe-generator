@@ -44,9 +44,9 @@ function App() {
       // Save data to table
       
       /*const { sqlData, sqlErrors } = */ await amplifyClient.mutations.createNewRecipe({
-        userid : [signInDetails?.loginId?.toString() || ""],
-        useringredients : [formData.get("ingredients")?.toString() || ""],
-        userrecipe : [userrecipetosave || ""]
+        userid : [signInDetails?.loginId?.toString() || ""] as string,
+        useringredients : [formData.get("ingredients")?.toString() || ""] as string,
+        userrecipe : [userrecipetosave || ""] as string
       })
 
    
