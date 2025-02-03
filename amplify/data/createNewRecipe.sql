@@ -1,0 +1,2 @@
+INSERT INTO SAVED_RECIPES (USER_ID, USER_INGREDIENTS, USER_RECIPE)
+VALUES (:userid, :useringredients, :userrecipe);

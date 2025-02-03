@@ -6,6 +6,7 @@ import { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 
+import { getCurrentUser } from 'aws-amplify/auth';
 
 import "@aws-amplify/ui-react/styles.css";
 
@@ -29,6 +30,25 @@ function App() {
       const { data, errors } = await amplifyClient.queries.askBedrock({
         ingredients: [formData.get("ingredients")?.toString() || ""],
       });
+    
+      const { username, userId, signInDetails } = await getCurrentUser();
+
+      console.log("username", username);
+      console.log("user id", userId);
+      console.log("userid", signInDetails?.loginId);
+      console.log("useringredients", formData.get("ingredients")?.toString());
+      console.log("userrecipe", data?.body);
+
+      const userrecipetosave = data?.body?.toString();
+
+      // Save data to table
+      
+      const {sqlData, sqlErrors} = await amplifyClient.mutations.createNewRecipe({
+        userid : signInDetails?.loginId,
+        useringredients : [formData.get("ingredients")?.toString() || ""],
+        userrecipe : userrecipetosave
+      })
+      
 
       if (!errors) {
         setResult(data?.body || "No data returned");
@@ -36,7 +56,12 @@ function App() {
         console.log(errors);
       }
 
-  
+      if (!sqlErrors) {
+        console.log(sqlData?.body || "No SQL data returned");
+      } else {
+        console.log(sqlErrors);
+      }
+        
     } catch (e) {
       alert(`An error occurred: ${e}`);
     } finally {

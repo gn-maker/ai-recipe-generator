@@ -1,5 +1,23 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
+
+import { schema as generatedSqlSchema } from './schema.sql';
+
+
+// Add a global authorization rule
+const sqlSchema = generatedSqlSchema.authorization(allow => allow.guest())
+  .addToSchema({
+    createNewRecipe: a.mutation()
+      .arguments({
+        userid: a.string().required(),
+        useringredients: a.string().required(),
+        userrecipe: a.string().required(),
+      })
+      .returns(a.json().array())
+      .authorization(allow => allow.authenticated())
+      .handler(a.handler.sqlReference('./createNewRecipe.sql'))
+  })
+
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
 adding a new "isDone" field as a boolean. The authorization rule below
@@ -24,10 +42,16 @@ const schema = a.schema({
     ),
 });
 
-export type Schema = ClientSchema<typeof schema>;
+const combinedSchema = a.combine([schema, sqlSchema]);
+
+/*export type Schema = ClientSchema<typeof schema>;*/
+
+export type Schema = ClientSchema<typeof combinedSchema>;
+
 
 export const data = defineData({
-  schema,
+  //schema,
+  schema: combinedSchema,
   authorizationModes: {
     defaultAuthorizationMode: "apiKey",
     apiKeyAuthorizationMode: {
@@ -35,6 +59,7 @@ export const data = defineData({
     },
   },
 });
+
 
 /*== STEP 2 ===============================================================
 Go to your frontend source code. From your client-side code, generate a
