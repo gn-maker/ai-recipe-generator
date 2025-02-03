@@ -40,13 +40,16 @@ function App() {
       console.log("userrecipe", data?.body);
 
       const userrecipetosave = data?.body?.toString();
+      const userIdToSave = signInDetails?.loginId?.toString();
+      const userIngredientsToSave = formData.get("ingredients")?.toString();
+
 
       // Save data to table
       
       /*const { sqlData, sqlErrors } = */ await amplifyClient.mutations.createNewRecipe({
-        userid : [signInDetails?.loginId?.toString() || ""] as string,
-        useringredients : [formData.get("ingredients")?.toString() || ""] as string,
-        userrecipe : [userrecipetosave || ""] as string
+        userid : userIdToSave || '',
+        useringredients : userIngredientsToSave || '',
+        userrecipe : userrecipetosave || ''
       })
 
    
