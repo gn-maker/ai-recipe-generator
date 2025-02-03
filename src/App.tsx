@@ -43,24 +43,25 @@ function App() {
 
       // Save data to table
       
-      const {sqlData, sqlErrors} = await amplifyClient.mutations.createNewRecipe({
-        userid : signInDetails?.loginId,
+      /*const { sqlData, sqlErrors } = */ await amplifyClient.mutations.createNewRecipe({
+        userid : [signInDetails?.loginId?.toString() || ""],
         useringredients : [formData.get("ingredients")?.toString() || ""],
-        userrecipe : userrecipetosave
+        userrecipe : [userrecipetosave || ""]
       })
-      
 
+   
       if (!errors) {
         setResult(data?.body || "No data returned");
       } else {
         console.log(errors);
       }
 
-      if (!sqlErrors) {
+/*      if (!sqlErrors) {
         console.log(sqlData?.body || "No SQL data returned");
       } else {
         console.log(sqlErrors);
       }
+*/      
         
     } catch (e) {
       alert(`An error occurred: ${e}`);
